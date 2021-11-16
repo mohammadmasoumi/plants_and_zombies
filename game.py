@@ -56,18 +56,18 @@ class Map:
             print(row)
             print(boarder)
 
-    def _remove_content(self, x, y, obj):
+    def remove_content(self, x, y, obj):
         self._board[x][y].remove_content(obj)
     
-    def _add_content(self, x, y, obj):
+    def add_content(self, x, y, obj):
         self._board[x][y].add_content(obj)
     
     def move_content(self, x, y, obj):
         pre_x = obj.x
         pre_y = obj.y
         
-        self._add_content(x, y, obj)
-        self._remove_content(pre_x, pre_y, obj)
+        self.add_content(x, y, obj)
+        self.remove_content(pre_x, pre_y, obj)
             
 
 class Bullet:
@@ -88,17 +88,15 @@ class Movable:
         self._x = x
         self._y = y
 
-
     def move(self, direction):
         if direction == DirectionChoices.LEFT.value:
             self._x -= 1
         elif direction == DirectionChoices.RIGHT.value:
             self._x += 1
-        elif direction == DirectionChoices.
-
-        
-
-
+        elif direction == DirectionChoices.UP.value:
+            self._y -= 1
+        else:
+            self._y += 1
         
 
 class Plant:
@@ -110,6 +108,9 @@ class Plant:
 
     def shoot(self):
         pass
+
+    def __str__(self):
+        return f"P: ({self._x}, {self._y})"
 
 
 class SunFlower(Plant):
@@ -123,6 +124,9 @@ class SunFlower(Plant):
     def shoot(self):
         pass
 
+    def __str__(self):
+        return f"SF: ({self._x}, {self._y})"
+
 
 def WeakPlant(Plant):
 
@@ -134,6 +138,9 @@ def WeakPlant(Plant):
     def shoot(self):
         pass
 
+    def __str__(self):
+        return f"WP: ({self._x}, {self._y})"
+
 
 def StrongPlant(Plant):
 
@@ -144,6 +151,9 @@ def StrongPlant(Plant):
 
     def shoot(self):
         pass
+
+    def __str__(self):
+        return f"SP: ({self._x}, {self._y})"
 
 
 class Zombie:
