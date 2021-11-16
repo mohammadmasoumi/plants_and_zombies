@@ -4,8 +4,8 @@ from enum import IntEnum
 class DirectionChoices(IntEnum):
     RIGHT = 1
     LEFT = 2
-    SHOUTH = 3
-    NORTH = 4
+    UP = 3
+    DOWN = 4
 
 
 class Cell:
@@ -93,7 +93,11 @@ class Movable:
         if direction == DirectionChoices.LEFT.value:
             self._x -= 1
         elif direction == DirectionChoices.RIGHT.value:
-            
+            self._x += 1
+        elif direction == DirectionChoices.
+
+        
+
 
         
 
