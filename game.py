@@ -2,10 +2,10 @@ from enum import IntEnum
 
 
 class DirectionChoices(IntEnum):
-    RIGHT = 'right'
-    LEFT = 'left'
-    SHOUTH = 'south'
-    NORTH = 'north'
+    RIGHT = 1
+    LEFT = 2
+    SHOUTH = 3
+    NORTH = 4
 
 
 class Cell:
@@ -82,7 +82,7 @@ class Bullet:
         pass
 
 
-class MobableObject:
+class Movable:
 
     def __init__(self, x, y) -> None:
         self._x = x
@@ -90,6 +90,10 @@ class MobableObject:
 
 
     def move(self, direction):
+        if direction == DirectionChoices.LEFT.value:
+            self._x -= 1
+        elif direction == DirectionChoices.RIGHT.value:
+            
 
         
 
