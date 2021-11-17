@@ -38,6 +38,12 @@ class Map:
         self._width = width
         self._board = []
 
+    def get_width(self):
+        return self._width
+
+    def get_height(self):
+        return self._length
+
     def initialize(self, file_name=None):
         for x in range(self._length):
             row = []
@@ -62,12 +68,9 @@ class Map:
     def add_content(self, x, y, obj):
         self._board[x][y].add_content(obj)
 
-    def move_content(self, new_x, new_y, obj):
-        pre_x = obj.get_x()
-        pre_y = obj.get_y()
-
+    def move_content(self, old_x, old_y, , new_x, new_y, obj):
+        self.remove_content(old_x, old_y, obj)
         self.add_content(new_x, new_y, obj)
-        self.remove_content(pre_x, pre_y, obj)
 
 
 class Movable:
@@ -83,25 +86,32 @@ class Movable:
         return self._y
 
     def _move(self, map: Map, direction: int):
+        prev_x = self._x
+        prev_y = self._y
+
         if direction == DirectionChoices.LEFT.value:
-            new_x = self._x - 1
-            new_y = self._y
+            new_x = prev_x - 1
+            new_y = prev_y
+
         elif direction == DirectionChoices.RIGHT.value:
             new_x = self._x + 1
             new_y = self._y
+
         elif direction == DirectionChoices.UP.value:
             new_x = self._x
             new_y = self._y - 1
+
         else:
             new_x = self._x
             new_y = self._y + 1
 
-        # move obj
-        map.move_content(new_x, new_y, self)
-
-        # update obj position
-        self._x = new_x
-        self._y = new_y
+        # destroy obj when it reaches to the end of map
+        if new_x < 0 or new_y < 0 or map.get_width() < new_x or map.get_height() < new_y:
+            map.remove_content(prev_x, prev_y, self)
+        else:
+            map.move_content(prev_x, prev_y, new_x, new_y, self)
+            self._x = new_x
+            self._y = new_y
 
     def move_right(self, map: Map):
         self._move(map, DirectionChoices.RIGHT.value)
