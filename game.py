@@ -62,11 +62,11 @@ class Map:
     def add_content(self, x, y, obj):
         self._board[x][y].add_content(obj)
 
-    def move_content(self, x, y, obj):
-        pre_x = obj.x
-        pre_y = obj.y
+    def move_content(self, new_x, new_y, obj):
+        pre_x = obj.get_x()
+        pre_y = obj.get_y()
 
-        self.add_content(x, y, obj)
+        self.add_content(new_x, new_y, obj)
         self.remove_content(pre_x, pre_y, obj)
 
 
@@ -88,15 +88,32 @@ class Movable:
         self._x = x
         self._y = y
 
+    def get_x(self):
+        return self._x
+
+    def get_y(self):
+        return self._y
+
     def _move(self, map: Map, direction: int):
         if direction == DirectionChoices.LEFT.value:
-            self._x -= 1
+            new_x = self._x - 1
+            new_y = self._y
         elif direction == DirectionChoices.RIGHT.value:
-            self._x += 1
+            new_x = self._x + 1
+            new_y = self._y
         elif direction == DirectionChoices.UP.value:
-            self._y -= 1
+            new_x = self._x
+            new_y = self._y - 1
         else:
-            self._y += 1
+            new_x = self._x
+            new_y = self._y + 1
+
+        # move obj
+        map.move_content(new_x, new_y, self)
+
+        # update obj position
+        self._x = new_x
+        self._y = new_y
 
     def move_right(self, map: Map):
         self._move(map, DirectionChoices.RIGHT.value)
