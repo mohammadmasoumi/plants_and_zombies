@@ -145,12 +145,18 @@ class Bullet(Movable):
     def move(self, map) -> None:
         self.move_right(map)
 
+    def __str__(self):
+        return "B"
+
 
 class Plant(Obj):
 
     def __init__(self, x, y, hp) -> None:
         self._hp = hp
         super(Plant, self).__init__(x, y)
+
+    def plant(self, map):
+        map.add_content(self._x, self._y, self)
 
     def __str__(self):
         return f"P: ({self._x}, {self._y})"
@@ -165,7 +171,8 @@ class ArmoredPlant(Plant):
         super(ArmoredPlant, self).__init__(x, y, hp)
 
     def shoot(self, map):
-        bullet = Bullet()
+        bullet = Bullet(self._x, self._y, self._attack_power, self._attack_speed)
+        map.add_content(bullet.x, bullet.y, bullet)
 
 
 class SunFlower(Plant):
@@ -277,7 +284,9 @@ class Engine:
         map.initialize()
 
         week_plant = WeakPlant(0, 0, 100, 20, 2)
-        map.add_content(week_plant.x, week_plant.y, week_plant)
+        week_plant.plant(map)
+        week_plant.shoot(map)
+
         map.print_board()
 
 
