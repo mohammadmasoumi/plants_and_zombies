@@ -29,7 +29,7 @@ class Cell:
         self._contents.remove(obj)
 
     def __str__(self):
-        return "".join([str(content) for content in self._contents])
+        return "-".join([str(content) for content in self._contents]).center(10)
 
 
 class Map:
@@ -50,16 +50,16 @@ class Map:
             row = []
             for y in range(self._width):
                 cell = Cell(x=x, y=y)
-                cell.add_content("*")
                 row.append(cell)
 
             self._board.append(row)
 
     def print_board(self):
-        boarder = "".join(["-" * (4 * self._width + 1)])
+        boarder = "".join(["-" * (11 * self._width + 1)])
         print(boarder)
+
         for x in range(self._length):
-            row = "| " + " | ".join([str(cell) for cell in self._board[x]]) + " |"
+            row = "|" + "|".join([str(cell).ljust(10) for cell in self._board[x]]) + "|"
             print(row)
             print(boarder)
 
@@ -69,7 +69,7 @@ class Map:
     def add_content(self, x, y, obj):
         self._board[x][y].add_content(obj)
 
-    def move_content(self, old_x, old_y , new_x, new_y, obj):
+    def move_content(self, old_x, old_y, new_x, new_y, obj):
         self.remove_content(old_x, old_y, obj)
         self.add_content(new_x, new_y, obj)
 
@@ -80,10 +80,12 @@ class Obj:
         self._x = x
         self._y = y
 
-    def get_x(self):
+    @property
+    def x(self):
         return self._x
 
-    def get_y(self):
+    @property
+    def y(self):
         return self._y
 
 
@@ -150,11 +152,20 @@ class Plant(Obj):
         self._hp = hp
         super(Plant, self).__init__(x, y)
 
-    def shoot(self):
-        pass
-
     def __str__(self):
         return f"P: ({self._x}, {self._y})"
+
+
+class ArmoredPlant(Plant):
+
+    def __init__(self, x, y, hp, attack_speed, attack_power):
+        self._attack_power = attack_power
+        self._attack_speed = attack_speed
+
+        super(ArmoredPlant, self).__init__(x, y, hp)
+
+    def shoot(self, map):
+        bullet = Bullet()
 
 
 class SunFlower(Plant):
@@ -166,49 +177,35 @@ class SunFlower(Plant):
         self._sun_rate = sun_rate
         super(SunFlower, self).__init__(x, y, hp)
 
-    def shoot(self):
-        pass
+    def __str__(self):
+        return f"SF"
+
+
+class WeakPlant(ArmoredPlant):
+
+    def __init__(self, x, y, hp, attack_speed, attack_power) -> None:
+        super(WeakPlant, self).__init__(x, y, hp, attack_speed, attack_power)
 
     def __str__(self):
-        return f"SF: ({self._x}, {self._y})"
+        return f"WP"
 
 
-class WeakPlant(Plant):
+class StrongPlant(ArmoredPlant):
 
-    def __init__(self, x, y, hp, attack_power, attack_speed) -> None:
-        self._attack_power = attack_power
-        self._attack_speed = attack_speed
-        super(WeakPlant, self).__init__(x, y, hp)
-
-    def shoot(self):
-        pass
+    def __init__(self, x, y, hp, attack_speed, attack_power) -> None:
+        super(StrongPlant, self).__init__(x, y, hp, attack_speed, attack_power)
 
     def __str__(self):
-        return f"WP: ({self._x}, {self._y})"
-
-
-class StrongPlant(Plant):
-
-    def __init__(self, x, y, hp, attack_power, attack_speed) -> None:
-        self._attack_power = attack_power
-        self._attack_speed = attack_speed
-        super(StrongPlant, self).__init__(x, y, hp)
-
-    def shoot(self):
-        pass
-
-    def __str__(self):
-        return f"SP: ({self._x}, {self._y})"
+        return f"SP"
 
 
 class Zombie(Movable):
 
-    def __init__(self, x, y, hp, attack_power, attack_speed, movement_speed) -> None:
+    def __init__(self, x, y, hp, speed, attack_power, attack_speed) -> None:
         self._hp = hp
         self._attack_power = attack_power
         self._attack_speed = attack_speed
-        self._movement_speed = movement_speed
-        super(Zombie, self).__init__(x, y)
+        super(Zombie, self).__init__(x, y, speed)
 
     def get_hp(self):
         return self._hp
@@ -230,17 +227,20 @@ class WeakZombie(Zombie):
         self._y = y
         self._hp = hp
 
+        speed = 1
         attack_power = 10
         attack_speed = 5
-        movement_speed = 5
 
-        super(WeakZombie, self).__init__(x, y, hp, attack_power, attack_speed, movement_speed)
+        super(WeakZombie, self).__init__(x, y, hp, speed, attack_power, attack_speed)
 
     def move(self, map):
         pass
 
     def attack(self, map):
         pass
+
+    def __str__(self):
+        return "WZ"
 
 
 class StrongZombie(Zombie):
@@ -250,17 +250,20 @@ class StrongZombie(Zombie):
         self._y = y
         self._hp = hp
 
+        speed = 1
         attack_power = 10
         attack_speed = 5
-        movement_speed = 5
 
-        super(StrongZombie, self).__init__(x, y, hp, attack_power, attack_speed, movement_speed)
+        super(StrongZombie, self).__init__(x, y, hp, speed, attack_power, attack_speed)
 
     def move(self, map):
         pass
 
     def attack(self, map):
         pass
+
+    def __str__(self):
+        return "SZ"
 
 
 class Engine:
@@ -272,6 +275,12 @@ class Engine:
         # map
         map = Map(5, 10)
         map.initialize()
+
+        week_plant = WeakPlant(0, 0, 100, 20, 2)
+        map.add_content(week_plant.x, week_plant.y, week_plant)
         map.print_board()
 
-        weak_plant = WeakPlant(0, 0, 100, 20, 2)
+
+if __name__ == '__main__':
+    engine = Engine()
+    engine.run()
