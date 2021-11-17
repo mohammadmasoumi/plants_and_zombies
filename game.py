@@ -1,4 +1,5 @@
 from enum import IntEnum
+from time import sleep
 
 
 class DirectionChoices(IntEnum):
@@ -68,14 +69,14 @@ class Map:
     def add_content(self, x, y, obj):
         self._board[x][y].add_content(obj)
 
-    def move_content(self, old_x, old_y, , new_x, new_y, obj):
+    def move_content(self, old_x, old_y , new_x, new_y, obj):
         self.remove_content(old_x, old_y, obj)
         self.add_content(new_x, new_y, obj)
 
 
-class Movable:
+class Obj:
 
-    def __init__(self, x, y) -> None:
+    def __init__(self, x, y):
         self._x = x
         self._y = y
 
@@ -85,25 +86,32 @@ class Movable:
     def get_y(self):
         return self._y
 
+
+class Movable(Obj):
+
+    def __init__(self, x, y, speed) -> None:
+        self._speed = speed
+        super(Movable, self).__init__(x, y)
+
     def _move(self, map: Map, direction: int):
         prev_x = self._x
         prev_y = self._y
 
         if direction == DirectionChoices.LEFT.value:
-            new_x = prev_x - 1
+            new_x = prev_x - self._speed
             new_y = prev_y
 
         elif direction == DirectionChoices.RIGHT.value:
-            new_x = self._x + 1
+            new_x = self._x + self._speed
             new_y = self._y
 
         elif direction == DirectionChoices.UP.value:
             new_x = self._x
-            new_y = self._y - 1
+            new_y = self._y - self._speed
 
         else:
             new_x = self._x
-            new_y = self._y + 1
+            new_y = self._y + self._speed
 
         # destroy obj when it reaches to the end of map
         if new_x < 0 or new_y < 0 or map.get_width() < new_x or map.get_height() < new_y:
@@ -130,14 +138,13 @@ class Bullet(Movable):
 
     def __init__(self, x, y, damage, speed) -> None:
         self._damage = damage
-        self._speed = speed
-        super(Bullet, self).__init__(x, y)
+        super(Bullet, self).__init__(x, y, speed)
 
     def move(self, map) -> None:
-        pass
+        self.move_right(map)
 
 
-class Plant(Movable):
+class Plant(Obj):
 
     def __init__(self, x, y, hp) -> None:
         self._hp = hp
