@@ -70,18 +70,6 @@ class Map:
         self.remove_content(pre_x, pre_y, obj)
 
 
-class Bullet:
-
-    def __init__(self, x, y, damage, speed) -> None:
-        self._x = x
-        self._y = y
-        self._damage = damage
-        self._speed = speed
-
-    def move(self, map) -> None:
-        pass
-
-
 class Movable:
 
     def __init__(self, x, y) -> None:
@@ -128,12 +116,22 @@ class Movable:
         self._move(map, DirectionChoices.DOWN.value)
 
 
-class Plant:
+class Bullet(Movable):
+
+    def __init__(self, x, y, damage, speed) -> None:
+        self._damage = damage
+        self._speed = speed
+        super(Bullet, self).__init__(x, y)
+
+    def move(self, map) -> None:
+        pass
+
+
+class Plant(Movable):
 
     def __init__(self, x, y, hp) -> None:
-        self._x = x
-        self._y = y
         self._hp = hp
+        super(Plant, self).__init__(x, y)
 
     def shoot(self):
         pass
@@ -149,7 +147,7 @@ class SunFlower(Plant):
         self._y = y
         self._hp = hp
         self._sun_rate = sun_rate
-        super(Plant, self).__init__(x, y, hp)
+        super(SunFlower, self).__init__(x, y, hp)
 
     def shoot(self):
         pass
@@ -163,7 +161,7 @@ class WeakPlant(Plant):
     def __init__(self, x, y, hp, attack_power, attack_speed) -> None:
         self._attack_power = attack_power
         self._attack_speed = attack_speed
-        super(Plant, self).__init__(x, y, hp)
+        super(WeakPlant, self).__init__(x, y, hp)
 
     def shoot(self):
         pass
@@ -177,7 +175,7 @@ class StrongPlant(Plant):
     def __init__(self, x, y, hp, attack_power, attack_speed) -> None:
         self._attack_power = attack_power
         self._attack_speed = attack_speed
-        super(Plant, self).__init__(x, y, hp)
+        super(StrongPlant, self).__init__(x, y, hp)
 
     def shoot(self):
         pass
@@ -186,15 +184,14 @@ class StrongPlant(Plant):
         return f"SP: ({self._x}, {self._y})"
 
 
-class Zombie:
+class Zombie(Movable):
 
     def __init__(self, x, y, hp, attack_power, attack_speed, movement_speed) -> None:
-        self._x = x
-        self._y = y
         self._hp = hp
         self._attack_power = attack_power
         self._attack_speed = attack_speed
         self._movement_speed = movement_speed
+        super(Zombie, self).__init__(x, y)
 
     def get_hp(self):
         return self._hp
@@ -220,7 +217,7 @@ class WeakZombie(Zombie):
         attack_speed = 5
         movement_speed = 5
 
-        super(Zombie, self).__init__(x, y, hp, attack_power, attack_speed, movement_speed)
+        super(WeakZombie, self).__init__(x, y, hp, attack_power, attack_speed, movement_speed)
 
     def move(self, map):
         pass
@@ -240,7 +237,7 @@ class StrongZombie(Zombie):
         attack_speed = 5
         movement_speed = 5
 
-        super(Zombie, self).__init__(x, y, hp, attack_power, attack_speed, movement_speed)
+        super(StrongZombie, self).__init__(x, y, hp, attack_power, attack_speed, movement_speed)
 
     def move(self, map):
         pass
