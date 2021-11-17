@@ -12,7 +12,7 @@ class Cell:
 
     def __init__(self, x, y) -> None:
         self._x = x
-        self._y = y 
+        self._y = y
         self._contents = []
 
     def get_x(self):
@@ -26,7 +26,7 @@ class Cell:
 
     def remove_content(self, obj):
         self._contents.remove(obj)
-    
+
     def __str__(self):
         return "".join([str(content) for content in self._contents])
 
@@ -58,17 +58,17 @@ class Map:
 
     def remove_content(self, x, y, obj):
         self._board[x][y].remove_content(obj)
-    
+
     def add_content(self, x, y, obj):
         self._board[x][y].add_content(obj)
-    
+
     def move_content(self, x, y, obj):
         pre_x = obj.x
         pre_y = obj.y
-        
+
         self.add_content(x, y, obj)
         self.remove_content(pre_x, pre_y, obj)
-            
+
 
 class Bullet:
 
@@ -76,8 +76,8 @@ class Bullet:
         self._x = x
         self._y = y
         self._damage = damage
-        self._speed = speed 
-    
+        self._speed = speed
+
     def move(self, map) -> None:
         pass
 
@@ -88,7 +88,7 @@ class Movable:
         self._x = x
         self._y = y
 
-    def move(self, direction):
+    def _move(self, map: Map, direction: int):
         if direction == DirectionChoices.LEFT.value:
             self._x -= 1
         elif direction == DirectionChoices.RIGHT.value:
@@ -97,7 +97,19 @@ class Movable:
             self._y -= 1
         else:
             self._y += 1
-        
+
+    def move_right(self, map: Map):
+        self._move(map, DirectionChoices.RIGHT.value)
+
+    def move_left(self, map: Map):
+        self._move(map, DirectionChoices.LEFT.value)
+
+    def move_up(self, map: Map):
+        self._move(map, DirectionChoices.UP.value)
+
+    def move_down(self, map: Map):
+        self._move(map, DirectionChoices.DOWN.value)
+
 
 class Plant:
 
@@ -120,6 +132,7 @@ class SunFlower(Plant):
         self._y = y
         self._hp = hp
         self._sun_rate = sun_rate
+        super(Plant, self).__init__(x, y, hp)
 
     def shoot(self):
         pass
@@ -128,7 +141,7 @@ class SunFlower(Plant):
         return f"SF: ({self._x}, {self._y})"
 
 
-def WeakPlant(Plant):
+class WeakPlant(Plant):
 
     def __init__(self, x, y, hp, attack_power, attack_speed) -> None:
         self._attack_power = attack_power
@@ -142,7 +155,7 @@ def WeakPlant(Plant):
         return f"WP: ({self._x}, {self._y})"
 
 
-def StrongPlant(Plant):
+class StrongPlant(Plant):
 
     def __init__(self, x, y, hp, attack_power, attack_speed) -> None:
         self._attack_power = attack_power
@@ -172,10 +185,9 @@ class Zombie:
     def set_hp(self, hp):
         self._hp = hp
 
-    def move(self, x, y):
-        self._x = x
-        self._y = y
-        
+    def move(self, map):
+        pass
+
     def attack(self, map):
         pass
 
@@ -187,12 +199,11 @@ class WeakZombie(Zombie):
         self._y = y
         self._hp = hp
 
-        attack_power  = 10
+        attack_power = 10
         attack_speed = 5
         movement_speed = 5
 
         super(Zombie, self).__init__(x, y, hp, attack_power, attack_speed, movement_speed)
-
 
     def move(self, map):
         pass
@@ -208,12 +219,11 @@ class StrongZombie(Zombie):
         self._y = y
         self._hp = hp
 
-        attack_power  = 10
+        attack_power = 10
         attack_speed = 5
         movement_speed = 5
 
         super(Zombie, self).__init__(x, y, hp, attack_power, attack_speed, movement_speed)
-
 
     def move(self, map):
         pass
@@ -228,12 +238,9 @@ class Engine:
         pass
 
     def run(self):
-        
         # map
         map = Map(5, 10)
         map.initialize()
         map.print_board()
 
         weak_plant = WeakPlant(0, 0, 100, 20, 2)
-
-        
