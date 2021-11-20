@@ -29,7 +29,7 @@ class Cell:
         self._contents.remove(obj)
 
     def __str__(self):
-        return "-".join([str(content) for content in self._contents]).center(10)
+        return " ".join([str(content) for content in self._contents]).center(10)
 
 
 class Map:
@@ -146,7 +146,7 @@ class Bullet(Movable):
         self.move_right(map)
 
     def __str__(self):
-        return "B"
+        return "=>"
 
 
 class Plant(Obj):
@@ -159,7 +159,7 @@ class Plant(Obj):
         map.add_content(self._x, self._y, self)
 
     def __str__(self):
-        return f"P: ({self._x}, {self._y})"
+        return f"P"
 
 
 class ArmoredPlant(Plant):
@@ -283,7 +283,7 @@ class Engine:
         map = Map(5, 10)
         map.initialize()
 
-        week_plant = WeakPlant(0, 0, 100, 20, 2)
+        week_plant = WeakPlant(0, 0, 100, 2, 100)
         week_plant.plant(map)
         week_plant.shoot(map)
 
